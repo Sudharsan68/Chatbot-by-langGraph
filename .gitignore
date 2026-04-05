@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# Distribution / packages
+dist/
+build/
+*.egg-info/
+
+# Environment variables
+.env
+
+# Vector Database (Local Storage)
+qdrant_data/
+
+# Temporary Files
+*.pdf
+temp_*.pdf
+*.log
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/

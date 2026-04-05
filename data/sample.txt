@@ -1,0 +1,25 @@
+# Wiingy Student Support Knowledge Base
+
+## 1. Refund & Cancellation Policy
+- **Full Refund:** Students are eligible for a full refund if a cancellation request is submitted at least 48 hours before the scheduled session.
+- **Partial Refund (50%):** Cancellations made between 24 and 48 hours before the session will receive a 50% refund.
+- **No Refund:** Cancellations made less than 24 hours before the session or "no-shows" are not eligible for a refund.
+- **Instructor Cancellation:** If an instructor cancels a session, students will receive a free session credit or a full cash refund based on their preference.
+
+## 2. Scheduling & Rescheduling
+- **Booking Window:** All new sessions must be booked at least 24 hours in advance through the Student Dashboard.
+- **Rescheduling Logic:** You can reschedule a class for free up to 24 hours before the start time. 
+- **Late Rescheduling:** Rescheduling within 24 hours of the start time is treated as a cancellation and follows the "No Refund" policy.
+- **Emergency Reschedules:** In case of medical emergencies, please provide a valid doctor's note to the support team at support@wiingy.com to waive the rescheduling fee.
+
+## 3. Technical Support
+- **Pre-Session Check:** We recommend joining the session link 5 minutes early to test your microphone and camera.
+- **Live Assistance:** If you face issues joining a Zoom or Google Meet room, use the "Live Support" chat button on the dashboard for immediate help.
+- **Support Tickets:** For non-urgent issues (portal login, certificate downloads), create a ticket via the "Help" tab. Typical resolution time is 4-6 business hours.
+
+## 4. Academic Integrity
+- **Session Recording:** All sessions are recorded for quality and safety purposes. Students can access these recordings for 30 days after the class.
+- **Code of Conduct:** Respectful behavior towards instructors is mandatory. Any form of harassment will lead to immediate account suspension without refund.
+
+## 5. Mobile App Access
+- **iOS/Android:** The Wiingy app is available on both stores. You can receive push notifications for session reminders 15 minutes before they start.
