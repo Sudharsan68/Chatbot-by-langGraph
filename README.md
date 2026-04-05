@@ -6,6 +6,40 @@ Designed for high performance and scalability, the backend supports both local a
 
 ---
 
+## 🏗 Architecture Workflow
+
+This system is built using **LangGraph** to provide a stateful, multi-node decision-making flow. Below is the technical data flow:
+
+```mermaid
+graph TD;
+    %% Entry Point
+    UserQuery["User Query (FastAPI POST /chat)"] --> IntentRouter["Intent Router (LangGraph Node)"];
+    
+    %% Decision Branch
+    IntentRouter -- "Categorizes Query" --> Branch{Decision};
+    
+    %% Knowledge Flow
+    Branch -- "FAQ / Research" --> RAG["RAG Node"];
+    RAG -- "Vector Search" --> Qdrant[("Cloud Qdrant DB")];
+    Qdrant -- "Context" --> RAG;
+    RAG -- "Grounded Prompt" --> Groq["Groq Inference (Llama 3.1)"];
+    
+    %% Action Flow
+    Branch -- "Action / Help" --> Agent["Agentic Tool Node"];
+    Agent -- "Executes" --> Tools["Support Tools (Schedule/Ticket)"];
+    Tools -- "Tool Result" --> Groq;
+    
+    %% Fallback Flow
+    Branch -- "Unclear" --> Fallback["Fallback Node"];
+    Fallback --> Groq;
+    
+    %% Final Output
+    Groq --> Response["Final Generated Answer"];
+    Response --> UserResponse["FastAPI Response + Session Memory"];
+```
+
+---
+
 ## 🚀 Core Capabilities
 
 - **Graph-Based Orchestration (LangGraph):** Employs explicit conditional routing to classify intents. Requests are deterministically directed to a knowledge-retrieval pipeline, an agentic tool executor, or a predefined fallback handler.
@@ -13,25 +47,6 @@ Designed for high performance and scalability, the backend supports both local a
 - **Dynamic File Ingestion:** Features native PDF parsing. Uploaded documents are automatically buffered, extracted via `pypdf`, dynamically chunked, embedded, and mapped to the Qdrant vector space.
 - **LLM Tool Execution:** Natively supports multi-tool selection, enabling the LLM to trigger backend APIs (such as checking schedules or creating support tickets) before summarizing an answer.
 - **High-Concurrency API (FastAPI):** Deploys as a lightweight, asynchronous API server, ready to be consumed by modern React, Vue, or Next.js frontends.
-
----
-
-## 🏗 Architecture
-
-```mermaid
-graph TD;
-    UserQuery["User Query"] --> |POST /chat| IntentRouter["Intent Router (LangGraph Classifier)"];
-    
-    IntentRouter -->|faq| RAG["RAG Retrieval Engine (Cloud Qdrant)"];
-    IntentRouter -->|action| Agent["Agentic Tool Engine"];
-    IntentRouter -->|unclear| Fallback["Standard LLM Fallback"];
-    
-    RAG --> Response["Generation (Llama 3.1 via Groq)"];
-    Agent --> Response;
-    Fallback --> Response;
-    
-    Response --> UserResponse["Final Answer Delivery"];
-```
 
 ---
 
