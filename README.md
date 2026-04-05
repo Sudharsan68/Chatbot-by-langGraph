@@ -3,41 +3,6 @@
 An enterprise-ready AI chatbot architecture engineered for customer support and educational platform assistance. The system combines deterministic graph-based routing with Retrieval-Augmented Generation (RAG) and dynamic tool-calling to resolve complex multi-step user inquiries.
 
 Designed for high performance and scalability, the backend supports both local and **Cloud Qdrant** vector storage. It utilizes on-device HuggingFace embedding models and Groq's lightning-fast Llama 3.1 inference engine.
-
----
-
-## 🏗 Architecture Workflow
-
-This system is built using **LangGraph** to provide a stateful, multi-node decision-making flow. Below is the technical data flow:
-
-```mermaid
-graph TD;
-    %% Entry Point
-    UserQuery["User Query (FastAPI POST /chat)"] --> IntentRouter["Intent Router (LangGraph Node)"];
-    
-    %% Decision Branch
-    IntentRouter -- "Categorizes Query" --> Branch{Decision};
-    
-    %% Knowledge Flow
-    Branch -- "FAQ / Research" --> RAG["RAG Node"];
-    RAG -- "Vector Search" --> Qdrant[("Cloud Qdrant DB")];
-    Qdrant -- "Context" --> RAG;
-    RAG -- "Grounded Prompt" --> Groq["Groq Inference (Llama 3.1)"];
-    
-    %% Action Flow
-    Branch -- "Action / Help" --> Agent["Agentic Tool Node"];
-    Agent -- "Executes" --> Tools["Support Tools (Schedule/Ticket)"];
-    Tools -- "Tool Result" --> Groq;
-    
-    %% Fallback Flow
-    Branch -- "Unclear" --> Fallback["Fallback Node"];
-    Fallback --> Groq;
-    
-    %% Final Output
-    Groq --> Response["Final Generated Answer"];
-    Response --> UserResponse["FastAPI Response + Session Memory"];
-```
-
 ---
 
 ## 🚀 Core Capabilities
