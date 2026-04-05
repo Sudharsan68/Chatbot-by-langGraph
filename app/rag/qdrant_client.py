@@ -6,8 +6,15 @@ from app.core.logging import setup_logger
 logger = setup_logger(__name__)
 
 def get_qdrant_client() -> QdrantClient:
-    # Forced to local disk path 'qdrant_data' to bypass your PC's network DNS errors
-    return QdrantClient(path="qdrant_data")
+    url = settings.QDRANT_URL
+    api_key = settings.QDRANT_API_KEY if settings.QDRANT_API_KEY else None
+    
+    if url == ":memory:" or url.startswith("./") or url.endswith(".db"):
+        logger.info("Connecting to local Qdrant storage")
+        return QdrantClient(path="qdrant_data")
+    else:
+        logger.info(f"Connecting to Cloud Qdrant at {url}")
+        return QdrantClient(url=url, api_key=api_key)
 
 def init_collection(embedding_size: int = 384): # Updated for HuggingFace
     client = get_qdrant_client()

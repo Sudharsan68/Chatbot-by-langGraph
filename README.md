@@ -2,15 +2,15 @@
 
 An enterprise-ready AI chatbot architecture engineered for customer support and educational platform assistance. The system combines deterministic graph-based routing with Retrieval-Augmented Generation (RAG) and dynamic tool-calling to resolve complex multi-step user inquiries.
 
-Designed for high performance and data privacy, the backend operates entirely independent of OpenAI. It utilizes on-device HuggingFace embedding models, local vector storage, and Groq's lightning-fast Llama 3.1 inference engine.
+Designed for high performance and scalability, the backend supports both local and **Cloud Qdrant** vector storage. It utilizes on-device HuggingFace embedding models and Groq's lightning-fast Llama 3.1 inference engine.
 
 ---
 
 ## 🚀 Core Capabilities
 
 - **Graph-Based Orchestration (LangGraph):** Employs explicit conditional routing to classify intents. Requests are deterministically directed to a knowledge-retrieval pipeline, an agentic tool executor, or a predefined fallback handler.
-- **Local RAG Pipeline (Qdrant + HuggingFace):** Ingests and retrieves knowledge bases locally. Bypasses cloud latency and connection drops by using the `all-MiniLM-L6-v2` model for text embeddings and storing vector data directly to disk (`qdrant_data/`).
-- **Dynamic File Ingestion:** Features native PDF parsing. Uploaded documents are automatically buffered, extracted via `pypdf`, dynamically chunked, embedded, and mapped to the local Qdrant space.
+- **Hybrid RAG Pipeline (Qdrant + HuggingFace):** Supports in-memory, local-disk, or **Cloud Qdrant** connectivity. Generates embeddings mathematically 100% offline via the `all-MiniLM-L6-v2` model, significantly reducing API costs and latency.
+- **Dynamic File Ingestion:** Features native PDF parsing. Uploaded documents are automatically buffered, extracted via `pypdf`, dynamically chunked, embedded, and mapped to the Qdrant vector space.
 - **LLM Tool Execution:** Natively supports multi-tool selection, enabling the LLM to trigger backend APIs (such as checking schedules or creating support tickets) before summarizing an answer.
 - **High-Concurrency API (FastAPI):** Deploys as a lightweight, asynchronous API server, ready to be consumed by modern React, Vue, or Next.js frontends.
 
@@ -22,7 +22,7 @@ Designed for high performance and data privacy, the backend operates entirely in
 graph TD;
     UserQuery["User Query"] --> |POST /chat| IntentRouter["Intent Router (LangGraph Classifier)"];
     
-    IntentRouter -->|faq| RAG["RAG Retrieval Engine (Local Qdrant)"];
+    IntentRouter -->|faq| RAG["RAG Retrieval Engine (Cloud Qdrant)"];
     IntentRouter -->|action| Agent["Agentic Tool Engine"];
     IntentRouter -->|unclear| Fallback["Standard LLM Fallback"];
     
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 ```
 
 ### 2. Configuration
-Copy the environment template. You will need a valid [Groq API Key](https://console.groq.com/) to power the inference engine.
+Create a `.env` file from the example template. You will need a **Groq API Key** and your **Qdrant Cloud Credentials**.
 ```bash
 cp .env.example .env
 ```
@@ -62,9 +62,11 @@ Ensure your `.env` variables contain the following fundamentals:
 # Core Configuration
 LLM_PROVIDER="groq"
 MODEL_NAME="llama-3.1-8b-instant"
-GROQ_API_KEY="your-api-key-here"
+GROQ_API_KEY="your-groq-api-key"
 
-# Vector Database
+# Vector Database (Cloud)
+QDRANT_URL="https://your-qdrant-cloud-url"
+QDRANT_API_KEY="your-qdrant-api-key"
 COLLECTION_NAME="support_docs_v2"
 ```
 
@@ -72,7 +74,7 @@ COLLECTION_NAME="support_docs_v2"
 
 ## ⚙️ Execution & Deployment
 
-Start the asynchronous API server. 
+Start the asynchronous API server:
 ```bash
 python run.py
 ```
@@ -84,7 +86,7 @@ To explore and execute endpoints visually, navigate to the Swagger UI playground
 ## 📡 API Reference
 
 ### Uploading Documentation (PDF)
-Extracts and ingests policies, FAQs, and rulebooks directly from a PDF.
+Extracts and ingests policies and knowledge directly into the cloud vector store.
 ```bash
 curl -X POST "http://127.0.0.1:8000/ingest-pdf" \
   -H "accept: application/json" \
@@ -100,16 +102,5 @@ curl -X POST http://127.0.0.1:8000/chat \
 -d '{
     "session_id": "session_8892",
     "query": "How do I get a refund for a missed class?"
-}'
-```
-
-### Chat Completion (Tool Trigger)
-Queries the system necessitating an external tool execution (e.g., database lookup).
-```bash
-curl -X POST http://127.0.0.1:8000/chat \
--H "Content-Type: application/json" \
--d '{
-    "session_id": "session_8892",
-    "query": "Check my upcoming schedule"
 }'
 ```
